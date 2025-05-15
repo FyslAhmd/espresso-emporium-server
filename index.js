@@ -71,6 +71,23 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/users", async (req, res) => {
+      const { email, lastSignInTime } = req.body;
+      const query = { email: email };
+      const updateDoc = {
+        $set: { lastSignInTime: lastSignInTime },
+      };
+      const result = await userCollection.updateOne(query, updateDoc);
+      res.send(result);
+    });
+
+    app.delete("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await userCollection.deleteOne(query);
+      res.send(result);
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log("Successfully connected to MongoDB");
   } finally {
